@@ -1,3 +1,3 @@
 # FINANCE_PROYECT
-## Santiago Almeida
-## Sara Arenas
+- Santiago Almeida 
+- Sara Arenas
