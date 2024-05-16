@@ -2,7 +2,7 @@
 Data Description:
 
 - ID: Unique identifier for each record.
-- CreditScore: The credit score of the individual.
+- CreditScore: The credit score of the individual. entre menor sea el score, mejor calificacion tiene
 - DebtRatio: The ratio of debt to total assets.
 - Assets: Total assets of the individual.
 - Age: The age of the individual.
