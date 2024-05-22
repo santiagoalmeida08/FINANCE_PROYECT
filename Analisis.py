@@ -87,69 +87,24 @@ base_full['Deuda'] = base_full['Deuda'].round(2)
 
 
 #Analisis de variables categoricas
-df_cat = base_full.copy()
+df_cat = base_full.select_dtypes(include=['object'])
+df_cat.info()
 
-#numero de dependientes vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['NumberOfDependents'], y=df_cat['Percent_paid'])
-plt.title('NumberOfDepends vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-"""Se puede observar que no se observa una relación directa entre el numero de dependientes 
-y el pago de la deuda, se observan algunos valores atipicos tanto de una mayor como de un menor 
-porcentaje de pago, siendo mayor el numero de atipicos de este ultimo para la categoria de un 
-alto numero de dependientes"""
-
-
-#numero de creditos vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['NumberOfOpenCreditLinesAndLoans'], y=df_cat['Percent_paid'])
-plt.title('NumberOfOpenCreditLinesAndLoans vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#numero de veces en mora vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['NumberOfTimesPastDue'], y=df_cat['Percent_paid'])
-plt.title('NumberOfTimesPastDue vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#EmploymentLength vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['EmploymentLength'], y=df_cat['Percent_paid'])
-plt.title('EmploymentLength vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#YearsAtCurrentAddress vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['YearsAtCurrentAddress'], y=df_cat['Percent_paid'])
-plt.title('YearsAtCurrentAddress vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#HomeOwnership vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['HomeOwnership'], y=df_cat['Percent_paid'])
-plt.title('HomeOwnership vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#Education vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['Education'], y=df_cat['Percent_paid'])
-plt.title('Education vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
-
-#MaritalStatus vs porcentaje pagado
-plt.figure(figsize=(10, 6))
-sns.boxplot(data=df_cat, x=df_cat['MaritalStatus'], y=df_cat['Percent_paid'])
-plt.title('MaritalStatus vs Percent_paid')
-plt.ylabel('Percent_page')
-plt.show()
+for column in df_cat.columns:
+    plt.figure(figsize=(10, 6))
+    sns.boxplot(data=df_cat, x=column, y='Percent_paid')
+    plt.title(f'Boxplot de {column} vs Percent_paid')
+    plt.ylabel('Percent_paid')
+    plt.show()
+    
+"""En los boxplots realizados se resalta lo siguiente:
+-En la mayoria de los boxplots se observa una relación directa entre la variables analizadas y la variable objetivo
+-La variable que presenta mayor variación en las distintas categorias es la de Marital status, en la cual el mayor pocentaje de pago 
+lo tienen las personas viudas y el menor pocentaje de pago lo tienen las personas casadas
+-Otra variable que presenta un comportamiento interesante es la de educación en la cual las personas con highschool y masters son las que tinen 
+un mayor porcentaje mentras que las personas con doctorado tienen un porcentaje de pago menor y tambien una mayor variabilidad. 
+-En la variable de tipo de vivienda algo interesante de emncionar que las personas con casa propia
+son las que presentan el menor porcentaje de pago y  la mayor variabilidad
+ """
 
 
-base_full.to_csv('base_full.csv', index=False)
