@@ -31,8 +31,10 @@ sns.heatmap(correlation, annot=True, cmap='viridis', fmt=".2f", linewidths=0.5)
 plt.title('Correlation Heatmap')
 plt.show()
 
-
 """Estructuramos los datos para hacer mas facil el analisis bivariado y creaun nuevas variables"""
+
+"""En las graficas de distribución de los datos se observa que hay algunas variables que para mejorar 
+su interpretabilidad es mejor agrupar los valores por categorias tal como se muestra acontinuacion"""
 #Agrupar el numero de dependientes en categorias
 base_full['NumberOfDependents'].value_counts()
 
@@ -75,6 +77,8 @@ base_full['YearsAtCurrentAddress'] = base_full['YearsAtCurrentAddress'].replace(
 base_full['YearsAtCurrentAddress'].value_counts()
 
 #Crear la variable objetivo con el complemento 
+"""Como se quiere saber cual es porcentaje de pago de los usuarios y se tiene el de no pago esta nueva variable 
+que sera nuestra variable respuesta se haya restandole a 1 el porcentaje de no pago"""
 base_full['Percent_paid'] = 1-base_full['NoPaidPerc']
 
 #Se puede sacar el valor de la deuda 
@@ -91,6 +95,12 @@ sns.boxplot(data=df_cat, x=df_cat['NumberOfDependents'], y=df_cat['Percent_paid'
 plt.title('NumberOfDepends vs Percent_paid')
 plt.ylabel('Percent_page')
 plt.show()
+
+"""Se puede observar que no se observa una relación directa entre el numero de dependientes 
+y el pago de la deuda, se observan algunos valores atipicos tanto de una mayor como de un menor 
+porcentaje de pago, siendo mayor el numero de atipicos de este ultimo para la categoria de un 
+alto numero de dependientes"""
+
 
 #numero de creditos vs porcentaje pagado
 plt.figure(figsize=(10, 6))
