@@ -89,14 +89,18 @@ base_full['Deuda'] = base_full['Deuda'].round(2)
 #Analisis de variables categoricas
 df_cat = base_full.select_dtypes(include=['object'])
 df_cat.info()
-
+df_cat['Percent_paid']=base_full['Percent_paid']
 for column in df_cat.columns:
-    plt.figure(figsize=(10, 6))
-    sns.boxplot(data=df_cat, x=column, y='Percent_paid')
-    plt.title(f'Boxplot de {column} vs Percent_paid')
-    plt.ylabel('Percent_paid')
-    plt.show()
-    
+    if column != 'Percent_paid':
+      plt.figure(figsize=(10, 6))
+      sns.boxplot(data=df_cat, x=column, y='Percent_paid')
+      plt.title(f'Boxplot de {column} vs Percent_paid')
+      plt.ylabel('Percent_paid')
+      plt.show()
+    else:
+      pass
+
+
 """En los boxplots realizados se resalta lo siguiente:
 -En la mayoria de los boxplots se observa una relación directa entre la variables analizadas y la variable objetivo
 -La variable que presenta mayor variación en las distintas categorias es la de Marital status, en la cual el mayor pocentaje de pago 
@@ -108,3 +112,4 @@ son las que presentan el menor porcentaje de pago y  la mayor variabilidad
  """
 
 
+base_full.to_csv('base_full.csv', index=False)
