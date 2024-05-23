@@ -43,8 +43,6 @@ list_dumies = [x.columns[i] for i in range(len(x.columns)) if x[x.columns[i]].dt
 #list_ordinal = ['NumberOfOpenCreditLinesAndLoans','NumberOfTimesPastDue','EmploymentLength','YearsAtCurrentAddress'	]
 list_label = [x.columns[i] for i in range(len(x.columns)) if x[x.columns[i]].dtype == 'object' and len(x[x.columns[i]].unique()) == 2]
 
-joblib.dump(list_dumies, 'list_dumies.pkl')
-joblib.dump(list_label, 'list_label.pkl')
 
 #Encoding
 def encode_data(df, list_le, list_dd): 
@@ -134,6 +132,7 @@ x_esc = scaler.fit_transform(x)
 x_esc = pd.DataFrame(x_esc, columns = x.columns)
 
 df_sel = x_esc.copy() #Variables seleccionadas
+var_sel = df_sel.columns
 
 # Algoritmos a modelar 
 mod_lin = LinearRegression()
@@ -167,9 +166,14 @@ df_eval.mean()
 
 best_model = mod_gb
 
-
-
 #Analizar el error de los modelos
 
+#Exportar elementos 
+
+joblib.dump(list_dumies, 'salidas\\list_dumies.pkl')
+joblib.dump(list_label, 'salidas\\list_label.pkl') 
+joblib.dump(scaler, 'salidas\\scaler.pkl')
+joblib.dump(var_sel, 'salidas\\var_sel.pkl')
+joblib.dump(best_model, 'salidas\\best_model.pkl')
 
 
