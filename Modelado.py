@@ -24,7 +24,8 @@ from sklearn.ensemble import BaggingRegressor
 #modelado redes neuronales
 import tensorflow as tf
 from tensorflow import keras
-
+#exportar modelo
+import joblib
 #Cargar datos
 
 data = pd.read_csv('C:\\Users\\Usuario\\Desktop\\Analitica3\\FINANCE_PROYECT\\base_full.csv')
@@ -42,6 +43,8 @@ list_dumies = [x.columns[i] for i in range(len(x.columns)) if x[x.columns[i]].dt
 #list_ordinal = ['NumberOfOpenCreditLinesAndLoans','NumberOfTimesPastDue','EmploymentLength','YearsAtCurrentAddress'	]
 list_label = [x.columns[i] for i in range(len(x.columns)) if x[x.columns[i]].dtype == 'object' and len(x[x.columns[i]].unique()) == 2]
 
+joblib.dump(list_dumies, 'list_dumies.pkl')
+joblib.dump(list_label, 'list_label.pkl')
 
 #Encoding
 def encode_data(df, list_le, list_dd): 
@@ -89,7 +92,7 @@ def modelos(list_mod, xtrain, ytrain, xtest, ytest):
         y_pred = modelo.predict(xtest)
         score_train = metrics.mean_squared_error(ytrain,modelo.predict(xtrain)) #metrica entrenamiento  
         score_test = metrics.mean_squared_error(ytest,y_pred) #metrica test
-        z= ['mod_lin','mod_rf','mod_gb','mod_xgb']
+        z= ['mod_lin','mod_rf','mod_gb']
         modelos = pd.DataFrame(z)
         list_test.append(np.sqrt(score_test)) #RSME
         list_train.append(np.sqrt(score_train)) #RSME
@@ -102,31 +105,13 @@ def modelos(list_mod, xtrain, ytrain, xtest, ytest):
 
 modelos(list_mod, xtrain, ytrain, xtest, ytest)
 
-# XGBOOSTING 
-dtrain = xgb.DMatrix(xtrain, label = ytrain)
-dtest = xgb.DMatrix(xtest, label = ytest)
-params = {
-    'objective': 'reg:squarederror',
-    'colsample_bytree': 0.8,
-    'learning_rate': 0.1,
-    'max_depth': 5,
-    'alpha': 10
-                }
-#train model
-xgb_train = xgb.train(params, dtrain)
-y_pred = xgb_train.predict(dtest)
-
-#metrics
-MSE = metrics.mean_squared_error(ytest,y_pred)
-RMSE = np.sqrt(MSE)
-R2 = metrics.r2_score(ytest,y_pred)
-
-print(f'Metricas XGBOOSTING:', 'RMSE:', RMSE, 'R2:', R2)
+mod_gb.fit(xtrain,ytrain)
+ypredgb = mod_gb.predict(xtest)
+# Metricas
+print("MAPE: %.2f" % metrics.mean_absolute_percentage_error(ytest, ypredgb))
 
 
-
-"""Se observa que se tiene buen desempeño en general, por lo cual procedemos a haceel modelado con cross-validaton
-y seleccion de variables"""
+"""Se observa que se tiene buen desempeño en general, por lo cual procedemos a haceel modelado con cross-validaton"""
 #Carga de base de datos
 
 datac = datacross.copy()
@@ -148,26 +133,12 @@ scaler = StandardScaler()
 x_esc = scaler.fit_transform(x)
 x_esc = pd.DataFrame(x_esc, columns = x.columns)
 
-#Seleccion de variables 
-sel_ = SelectFromModel(Lasso(alpha = 0.0001, max_iter=10000), max_features=12)  
-sel_.fit(x_esc, y)
-print(sel_.estimator_.coef_)
-#Obtener variables seleccionadas
-x_new = sel_.get_support()#descarta los coeficientes mas cercanos a 0
-df_new = x_esc.iloc[:,x_new]
-df_new.head()
-df_sel = df_new.copy() #Variables seleccionadas
+df_sel = x_esc.copy() #Variables seleccionadas
 
 # Algoritmos a modelar 
 mod_lin = LinearRegression()
 mod_rf = RandomForestRegressor(random_state=42)
 mod_gb = GradientBoostingRegressor(n_estimators= 700 , random_state=42)
-
-"""
-bagging = BaggingRegressor(base_estimator= mod_rf,n_estimators=3, random_state=42)
-bagging.fit(xtrain,ytrain)
-bagging.predict(xtest)
-"""
 list = [mod_lin,mod_rf,mod_gb]#bagging
 
 #Evaluacion del desempeño de modelos 
@@ -184,10 +155,9 @@ def medir_modelos(modelos,scoring,X,y,cv):
 
 
 var_total = medir_modelos(list,"neg_root_mean_squared_error",x_esc,y,3) #RMSE
-var_sel = medir_modelos(list,"neg_root_mean_squared_error",df_sel,y,3) #RMSE
 
-df_eval = pd.concat([var_total,var_sel],axis=1)
-df_eval.columns = ['rl','rf','gb','rl_sel','rf_sel','gb_sel']
+df_eval = pd.concat([var_total],axis=1)
+df_eval.columns = ['rl','rf','gb']
 
 df_eval.plot(kind='box', figsize=(10,6))
 plt.title('Desempeño de modelos con todas las variables y variables seleccionadas')
@@ -195,31 +165,11 @@ df_eval.mean()
 
 #Seleccionar el mejor modelo
 
-"""
-21/05/24
-POR AHORA SE OBSERVA UN RENDIMIENTO ADECUADO, EL R2 NO ES MUY BUENO CON LAS VARIABLES SELECCIONADAS Y EL RMS TAMBIEN BAJA SU DESEMPEÑO EN COMPARACION DE LAS VARIABLES TOTALES
-HAY QUE CONSIDERAR : 
-- PONER MENOS PESO EN EL METODO DE SELECCION DE VARIABLES PARA QUE NO DESCARTE TANTAS VARIABLES
-- EXPLORAR OTRO METODO DE SELECCION DE VARIABLES Y EVALUAR EL RENDIMIENTO CON ESAS VARIABLES
-- EXPLORAR ALGORITMOS COMO XTREME GRADIENT BOOSTING O METODOS DE ENSAMBLE COMO BAGGING O BOOSTING
-- NO ESTARIA MAL HACER UNA RED NEURONAL PARA MIRAR EL RENDIMIENTO
-
-22/05/24
-- Probando algoritmos de bagging el costo computacional es muy alto en comparacion al aumento de resultados que se espera
-- Probar otro metodo para seleccion de variables """    
+best_model = mod_gb
 
 
-# REDES NEURONALES 
 
-#Estructura inicial de la red 
+#Analizar el error de los modelos
 
-a = keras.models.Sequential([
-    keras.layers.Dense(128,activation ='tanh'),
-    keras.layers.Dense(64,activation ='relu'),
-    keras.layers.Dense(32,activation ='tanh'),
-    keras.layers.Dense(1,activation ='relu')
-])
 
-#funcion de perdida
-l = keras.losses.mean_squared_error()
-m = keras.metrics.mean_squared_error()  
+
