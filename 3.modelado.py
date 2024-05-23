@@ -5,20 +5,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
-#preprocesamiento
-from sklearn.preprocessing import OrdinalEncoder, LabelEncoder
-from sklearn.preprocessing import StandardScaler
-#Seleccion de variables
-from sklearn.feature_selection import SelectFromModel
-from sklearn.feature_selection import SequentialFeatureSelector
-from sklearn.linear_model import Lasso
 #modelado_aprendizaje supervisado 
 from sklearn import metrics
 from sklearn.linear_model import LinearRegression
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import cross_validate
-import xgboost as xgb
+import seaborn as sns
+from sklearn.preprocessing import StandardScaler
 #funciones
 import funciones as fn
 #Ajuste de hiperparametros
@@ -135,8 +129,7 @@ train_test_rf.columns=['train_score','test_score']
 print("TRAIN RSME: %2f" % train_test_rf['train_score'].mean())
 print("TEST RSME: %2f" % train_test_rf["test_score"].mean())
 
-#Analizar el error de los modelos
-
+#Analizar el error de los modelos ?
 
 
 #Exportar elementos 
