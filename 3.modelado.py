@@ -129,8 +129,25 @@ train_test_rf.columns=['train_score','test_score']
 print("TRAIN RSME: %2f" % train_test_rf['train_score'].mean())
 print("TEST RSME: %2f" % train_test_rf["test_score"].mean())
 
-#Analizar el error de los modelos ?
+#Analizar el error de los modelos 
+#predicciones
 
+ypred = mod_final.predict(df_sel)
+
+#resilduales y-ypred
+residuals = y - ypred
+
+#histograma
+plt.hist(residuals, bins=50)
+plt.xlabel("Residuals")
+plt.ylabel("Frequency")
+plt.show()
+
+#scatterplot
+plt.scatter(ypred,residuals)
+plt.axhline(y=0, color='r', linestyle='-')
+plt.xlabel("Predictions")
+plt.ylabel("Residuals")
 
 #Exportar elementos 
 joblib.dump(list_dumies, 'salidas\\list_dumies.pkl')
