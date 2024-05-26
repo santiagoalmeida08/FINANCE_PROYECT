@@ -3,7 +3,7 @@ import joblib
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
 
-best_model = joblib.load("salidas\\best_model.pkl")
+mod_final = joblib.load("salidas\\mod_final.pkl")
 var_sel = joblib.load("salidas\\var_sel.pkl")
 scaler = joblib.load("salidas\\scaler.pkl")
 list_label = joblib.load("salidas\\list_label.pkl")
@@ -12,7 +12,7 @@ list_dumies = joblib.load("salidas\\list_dumies.pkl")
 #Cargar datos
 
 df = pd.read_csv('https://raw.githubusercontent.com/juancamiloespana/LEA3_FIN/main/data/datos_nuevos_creditos.csv')
-
+df.columns
 #Transformación de datos para realizar predicciones
 
 def transformar(df):
@@ -94,5 +94,37 @@ df_escc = df_esc[var_sel]
 
 
 #Prediccion de porcentaje de pago 
+prediccion= mod_final.predict(df_escc)
+pd_pred=pd.DataFrame(prediccion, columns=['Percent_paid'])
+pred=pd.concat([df['ID'],pd_pred],axis=1)
 
-best_model.predict(df_escc)
+pred['Percent_paid'].hist(figsize=(16, 20), bins=50, xlabelsize=8, ylabelsize=8)
+
+"""Partiendo de la distribución del porcentaje de pago los grupos para asignación de interes con el respectivo interes son:
+-del 70-80% o menor al 80% = 7%
+-del 81-85%= 5%
+-86-90%=4%
+-91-95%=3%
+-96-100%= 2%
+"""
+
+interes= pred.copy()
+def calcularinteres(Percent_paid):
+    interesoperativo= 0.05
+    interesdemargen= 0.1
+    if Percent_paid <= 0.8:
+        return 0.07+interesoperativo+interesdemargen
+    elif 0.8 < Percent_paid <= 0.85:
+        return 0.05+interesoperativo+interesdemargen
+    elif 0.85 < Percent_paid <= 0.9:
+        return 0.04+interesoperativo+interesdemargen
+    elif 0.9 < Percent_paid <=0.95:
+        return 0.03+interesoperativo+interesdemargen
+    else:
+        return 0.02+interesoperativo+interesdemargen
+
+
+interes['Interes']=interes['Percent_paid'].apply(calcularinteres)
+
+Interes_final= interes.drop(columns=['Percent_paid'])
+Interes_final.to_excel("salidas\\Interes_final.xlsx")  #Exportar todas las  predicciones 
