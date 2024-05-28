@@ -47,7 +47,7 @@ pred[pred['Percent_paid']>1.0].count()
 
 interes= pred.copy()
 
-interes['Interes'] = 1-pred['Percent_paid'] # +- media del error
+interes['int_rc'] = 1-pred['Percent_paid'] + 0.05 # +- media del error
 
 """
 def calcularinteres(Percent_paid):
@@ -64,11 +64,12 @@ def calcularinteres(Percent_paid):
     elif 0.9 < Percent_paid <=0.95:
         return 0.03+interesoperativo+interesdemargen
     else:
-        return 0.02+interesoperativo+interesdemargen """
+        return 0.02+interesoperativo+interesdemargen 
+interes['Interes']=interes['Percent_paid'].apply(calcularinteres)"""
 
 
-interes['Interes']=interes['Percent_paid'].apply(calcularinteres)
+Interes_final = interes.drop(columns = 'Percent_paid')
+Interes_final['int_rc'].hist(figsize=(8, 8), bins=50)
+Interes_final.describe()
 
-Interes_final= interes.drop(columns=['Percent_paid'])
-
-Interes_final.to_excel("salidas\\Interes_final.xlsx")  #Exportar todas las  predicciones 
+#Interes_final.to_excel("salidas\\Interes_final.xlsx")  #Exportar todas las  predicciones 
