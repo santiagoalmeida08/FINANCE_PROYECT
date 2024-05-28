@@ -23,8 +23,8 @@ import joblib
 
 #Cargar datos
 
-data = joblib.load('data\\base_full.pkl')
-
+#data = joblib.load('data\\base_full.pkl')
+data = joblib.load('data\\base_full2.pkl')
 #Pruba modelado usando train-test split y todas las variables 
 #division
 data = data.drop(columns=['NoPaidPerc']) # la eliminamos ya que esta variable podria afectar el rendimiento

@@ -91,6 +91,18 @@ base_full['Deuda'] = base_full['Deuda'].round(2)
 df_cat = base_full.select_dtypes(include=['object'])
 df_cat.info()
 df_cat['Percent_paid']=base_full['Percent_paid']
+
+#Analisis variable objetivo 
+base_full['Percent_paid'].hist()
+base_full['Percent_paid'].describe()
+base_full2 = base_full.copy()
+
+#reemplazar valores de percent paid mayores a 90 por la media
+
+base_full2['Percent_paid'] = base_full2['Percent_paid'].apply(lambda x: base_full2['Percent_paid'].mean() if x > 0.90 else x)
+base_full2['Percent_paid'].describe()
+base_full2['Percent_paid'].hist()
+
 for column in df_cat.columns:
     if column != 'Percent_paid':
       plt.figure(figsize=(10, 6))
@@ -113,4 +125,5 @@ son las que presentan el menor porcentaje de pago y  la mayor variabilidad
  """
 
 joblib.dump(base_full, 'data\\base_full.pkl')
+joblib.dump(base_full2, 'data\\base_full2.pkl')
 
