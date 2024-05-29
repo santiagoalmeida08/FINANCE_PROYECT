@@ -36,40 +36,19 @@ pred['Percent_paid'].hist(figsize=(8, 8), bins=50)
 
 pred[pred['Percent_paid']>1.0].count()
 
-"""Partiendo de la distribución del porcentaje de pago los grupos para asignación de interes con el respectivo interes son:
--menor a 70% = 12%
--70-80 = 7%
--del 81-85% = 5%
--86-90%=4%
--91-95%=3%
--96-100%= 2%
+"""El interes se tomara teniendo encuenta el porcentaje de no no pago y se le sumara a 
+este un paroximado del error, debido a que el modelo segun el grafico de los residuales 
+no esta sobreestimando ni subestimando, el error se va a sumar ya que es mejor tener una 
+ganancia a que el modelo subestime y se reste el error y se este teniendo una perdida
 """
 
 interes= pred.copy()
 
-interes['int_rc'] = 1-pred['Percent_paid'] + 0.05 # +- media del error
-
-"""
-def calcularinteres(Percent_paid):
-    interesoperativo= 0.05
-    interesdemargen= 0.1
-    if Percent_paid <= 0.7:
-        return 0.12+interesoperativo+interesdemargen
-    elif 0.7<Percent_paid<= 0.8:
-        return 0.07+interesoperativo+interesdemargen
-    elif 0.8 < Percent_paid <= 0.85:
-        return 0.05+interesoperativo+interesdemargen
-    elif 0.85 < Percent_paid <= 0.9:
-        return 0.04+interesoperativo+interesdemargen
-    elif 0.9 < Percent_paid <=0.95:
-        return 0.03+interesoperativo+interesdemargen
-    else:
-        return 0.02+interesoperativo+interesdemargen 
-interes['Interes']=interes['Percent_paid'].apply(calcularinteres)"""
-
+interes['int_rc'] = 1-pred['Percent_paid'] + 0.05 # + media del error
 
 Interes_final = interes.drop(columns = 'Percent_paid')
 Interes_final['int_rc'].hist(figsize=(8, 8), bins=50)
+Interes_final= Interes_final.round(2)
 Interes_final.describe()
 
-#Interes_final.to_excel("salidas\\Interes_final.xlsx")  #Exportar todas las  predicciones 
+Interes_final.to_excel("salidas\\Interes_final.xlsx") #Exportar todas las  predicciones 
