@@ -51,4 +51,4 @@ Interes_final['int_rc'].hist(figsize=(8, 8), bins=50)
 Interes_final= Interes_final.round(2)
 Interes_final.describe()
 
-Interes_final.to_excel("salidas\\Interes_final.xlsx") #Exportar todas las  predicciones 
+Interes_final.to_csv("salidas\\Interes_final.csv") #Exportar todas las  predicciones 
