@@ -48,7 +48,6 @@ interes['int_rc'] = 1-pred['Percent_paid'] + 0.05 # + media del error
 
 Interes_final = interes.drop(columns = 'Percent_paid')
 Interes_final['int_rc'].hist(figsize=(8, 8), bins=50)
-Interes_final= Interes_final.round(2)
 Interes_final.describe()
 
 Interes_final.to_csv("salidas\\Interes_final.csv") #Exportar todas las  predicciones 
