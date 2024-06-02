@@ -142,6 +142,9 @@ plt.hist(residuals, bins=50)
 plt.xlabel("Residuals")
 plt.ylabel("Frequency")
 plt.show()
+"""Debido a que el histograma de los residuales posee una distribución normal
+el error de las predicciones se da de forma aleatoria por lo cual se pude afirmar 
+que el modelo no sobreestima ni subestima"""
 
 #scatterplot
 plt.scatter(ypred,residuals)
