@@ -81,6 +81,11 @@ base_full['YearsAtCurrentAddress'].value_counts()
 """Como se quiere saber cual es porcentaje de pago de los usuarios y se tiene el de no pago esta nueva variable 
 que sera nuestra variable respuesta se haya restandole a 1 el porcentaje de no pago"""
 base_full['Percent_paid'] = 1-base_full['NoPaidPerc']
+base_full['Percent_paid'].hist()
+plt.title('Distribución de la variable objetivo')
+plt.xlabel('Porcentaje de pago')
+plt.ylabel('Frecuencia')
+plt.show()
 
 #Se puede sacar el valor de la deuda 
 base_full['Deuda'] = base_full['DebtRatio']*base_full['Assets'] 
@@ -102,6 +107,10 @@ base_full2 = base_full.copy()
 base_full2['Percent_paid'] = base_full2['Percent_paid'].apply(lambda x: base_full2['Percent_paid'].mean() if x > 0.90 else x)
 base_full2['Percent_paid'].describe()
 base_full2['Percent_paid'].hist()
+plt.title('Distribución de la variable objetivo')
+plt.xlabel('Porcentaje de pago')
+plt.ylabel('Frecuencia')
+plt.show()
 
 for column in df_cat.columns:
     if column != 'Percent_paid':
